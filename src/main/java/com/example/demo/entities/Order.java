@@ -1,6 +1,7 @@
 package com.example.demo.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ public class Order implements Serializable {
     @OneToMany(mappedBy = "id.order")
     private Set<OrderItem> items = new HashSet<>();
 
+    @JsonIgnore
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 
@@ -80,6 +82,14 @@ public class Order implements Serializable {
         if (orderStatus != null) {
             this.orderStatus = orderStatus.getCode();
         }
+    }
+
+    public Double getTotal() {
+        double sum =0.0;
+        for (OrderItem x : items) {
+            sum =+ x.getSubTotal();
+        }
+        return sum;
     }
 
     public Set<OrderItem> getItems() {
